@@ -1,37 +1,85 @@
 const { gql, ApolloServer } = require("apollo-server");
 
+const products = [
+  {
+    id: 12,
+    name: "Controle PC",
+    price: 190,
+  },
+  {
+    id: 13,
+    name: "Mouse LG",
+    price: 190,
+  },
+];
+
+const users = [
+  {
+    id: 2,
+    name: "Let",
+    salary: 3000,
+    active: true,
+    age: 19,
+  },
+  {
+    id: 23,
+    name: "Tulio",
+    salary: 3000,
+    active: true,
+    age: 20,
+  },
+];
+
 const resolvers = {
   Query: {
-    age() {
-      return 18;
+    users() {
+      return users;
+    },
+    products() {
+      return products;
     },
 
-    name() {
-      return "Tulio";
+    user(obj, args) {
+      const { id, name } = args;
+      if (id) {
+        return users.find((user) => user.id === id);
+      }
+
+      return users.find((user) => user.name === name);
     },
-    id() {
-      return "3124124";
-    },
-    salary() {
-      return 1999;
-    },
-    active() {
-      return true;
-    },
-    techs() {
-      return ["CSS"];
+
+    product(obj, args) {
+      const { id, name } = args;
+
+      if (id) {
+        return products.find((product) => product.id === id);
+      }
+
+      return products.find((product) => product.name === name);
     },
   },
 };
 
 const typeDefs = gql`
-  type Query {
+  type Product {
+    id: ID
+    name: String
+    price: Float
+  }
+
+  type User {
     name: String
     age: Int
     salary: Float
     id: ID
     active: Boolean
-    techs: [String!]!
+  }
+
+  type Query {
+    users: [User]
+    products: [Product]
+    user(id: Int, name: String): User
+    product(id: Int, name: String): Product
   }
 `;
 
